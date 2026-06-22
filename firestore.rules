@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Funções de Ajuda
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email.lower() == 'allanhenriq91@gmail.com' ||
+        request.auth.token.email.lower() == 'adm.wpink@gmail.com'
+      );
+    }
+
+    // Bloqueio Global (Segurança Inicial)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Regras Temporárias para Diagnóstico (PERMITIR TUDO)
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
